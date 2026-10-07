@@ -5,8 +5,6 @@ export const songsTable = pgTable('songs', {
     name: text('Name').notNull(),
     artist: text("Artist"),
     duration: integer('Duration').notNull(),
-    thumbnail_link: text("Thumbnail Link"),
-    song_link: text("Song Link").notNull()
 });
 
 export type songs = typeof songsTable.$inferInsert;

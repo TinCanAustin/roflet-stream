@@ -13,5 +13,5 @@ export default defineConfig({
         url: process.env.DATABASE_URL as string
     },
     schemaFilter: ["public"],
-    tablesFilter: ["!pg_stat_statements", "!pg_stat_statements_info"],
+    tablesFilter: ["!pg_stat_*"],
 });

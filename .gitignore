@@ -1,4 +1,4 @@
 **/node_modules/
-server/.env
+server/src/.env
 
 server/src/drizzel/migrations
