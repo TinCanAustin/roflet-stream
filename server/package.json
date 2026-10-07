@@ -1,0 +1,30 @@
+{
+  "name": "roflet_streaming",
+  "version": "1.0.0",
+  "description": "The roflet music service. Listen to roflet's music through an API",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "./dist/server.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node ./dist/server.js",
+    "dev": "nodemon ./src/server.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "drizzle-orm": "^1.0.0-rc.4",
+    "express": "^5.2.1",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  }
+}
