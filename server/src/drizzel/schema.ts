@@ -1,4 +1,4 @@
-import { uuid, text, integer, timestamp, pgTable  } from "drizzle-orm/pg-core";
+import { uuid, text, integer, pgTable  } from "drizzle-orm/pg-core";
 
 export const songsTable = pgTable('songs', {
     id: uuid('id').defaultRandom().primaryKey().notNull(),
@@ -7,4 +7,4 @@ export const songsTable = pgTable('songs', {
     duration: integer('Duration').notNull(),
 });
 
-export type songs = typeof songsTable.$inferInsert;
+export type Songs = typeof songsTable.$inferInsert;
