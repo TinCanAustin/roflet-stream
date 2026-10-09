@@ -103,19 +103,11 @@ authRouter.post("/upload", audio.single('file'),
                     }
                 });
             }catch(err){
-                if(err instanceof S3ServiceException){
-                    await deleteSong(id);
-                    return res.status(500).send({
-                        error: true,
-                        message: `S3 Upload failed (${err.name})`
-                    });
-                }else{
-                    await deleteSong(id);
-                    return res.status(500).send({
-                        error: true,
-                        message: `DB bio upload failed`
-                    })
-                }
+                await deleteSong(id);
+                return res.status(500).send({
+                    error: true,
+                    message: "Something went wrong"
+                });
             }
         }else{
             return res.status(400).send({
