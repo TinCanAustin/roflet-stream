@@ -55,7 +55,7 @@ authRouter.get("/validate",
 );
 
 authRouter.post("/upload", audio.single('file'),
-    async (req: Request, res: Response)=>{
+    async (req: Request<{}, {}, bio>, res: Response)=>{
         // @ts-ignore
         if(!req.session.auth){
             res.status(401).json({'error': true, 'message': "Not logged in"});
