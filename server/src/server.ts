@@ -1,19 +1,13 @@
 import express from 'express';
-import type { Request, Response } from 'express';
 import cors from 'cors';
-import fs from 'fs';
+// import fs from 'fs';
 import session from 'express-session';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-
 import authRouter from './route/auth.ts';
-
-
+import songsRouter from './route/song.ts';
 
 // Creating file stream
-const statSync = fs.statSync;
-const createReadStream = fs.createReadStream;
+// const statSync = fs.statSync;
+// const createReadStream = fs.createReadStream;
 
 const HOUR_VAR = 60000 * 60;
 
@@ -71,6 +65,7 @@ app.set('trust proxy', 1);
 // });
 
 app.use('/auth', authRouter);
+app.use('/songs', songsRouter);
 
 app.listen(PORT, ()=>{
     console.log(`Server running on port ${PORT}`);
