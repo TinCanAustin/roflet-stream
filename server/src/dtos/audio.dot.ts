@@ -1,6 +1,7 @@
 export interface bio{
+    id?: string,
     name: string,
-    artist: string,
+    artist: string | null,
     duration: number
 }
 
