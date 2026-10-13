@@ -2,7 +2,8 @@ export interface bio{
     id?: string,
     name: string,
     artist: string | null,
-    duration: number
+    fileFormat: string | null,
+    thumbnail_link: string | null
 }
 
 export interface songIdParam{

@@ -66,11 +66,12 @@ authRouter.post("/upload", audio.single('file'),
 
         const name = req.body.name;
         const artist = req.body.artist;
-        const duration = req.body.duration;
+        const fileType = req.body.fileFormat;
+        const thumbnail_link = req.body.thumbnail_link;
 
-        if(file && name != undefined && artist != undefined && duration != undefined){
+        if(file && name != undefined && artist != undefined && fileType != undefined && thumbnail_link != undefined){
             const id = v4();
-            const fileKey = `${id}-${file.originalname}`;
+            const fileKey = `${id}-${name}${fileType}`;
 
             console.log("Uploaded file type:", file.mimetype);
 
@@ -79,7 +80,8 @@ authRouter.post("/upload", audio.single('file'),
                     id: id,
                     name: name,
                     artist: artist,
-                    duration: duration
+                    fileFormat: fileType,
+                    thumbnail_link: thumbnail_link
                 }
                 await insertSong(_bio);
 

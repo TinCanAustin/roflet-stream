@@ -3,3 +3,4 @@ server/src/.env
 
 server/src/drizzel/migrations
 server/audio
+server/test.html

@@ -6,7 +6,6 @@ import type { Request, Response } from "express";
 import type { bio, songIdParam } from "../dtos/audio.dot.ts";
 import { getSong } from "../drizzel/query.ts";
 import { GetObjectCommand, HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import fs from "fs";
 import { pipeline } from "stream/promises";
 import type { Readable } from "node:stream";
 
@@ -33,7 +32,7 @@ songsRouter.get("/:id",
                 });
             }
 
-            const song_name = `${song_bio[0]?.id}-${song_bio[0]?.name}.mp3`;
+            const song_name = `${song_bio[0]?.id}-${song_bio[0]?.name}${song_bio[0]?.fileFormat}`;
 
             const e3_getInfo = new HeadObjectCommand({
                 Bucket: process.env.AWS_S3_BUCKET as string,

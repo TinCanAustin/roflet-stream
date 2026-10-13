@@ -4,7 +4,8 @@ export const songsTable = pgTable('songs', {
     id: uuid('id').defaultRandom().primaryKey().notNull(),
     name: text('Name').notNull(),
     artist: text("Artist"),
-    duration: integer('Duration').notNull(),
+    fileFormat: text("File_Format"),
+    thumbnail_link: text("Thumbnail_Link")
 });
 
 export type Songs = typeof songsTable.$inferInsert;
