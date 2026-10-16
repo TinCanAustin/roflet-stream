@@ -4,7 +4,7 @@ import { config } from "dotenv";
 import { Router } from "express";
 import type { Request, Response } from "express";
 import type { bio, songIdParam } from "../dtos/audio.dot.ts";
-import { getSong } from "../drizzel/query.ts";
+import { getSong, getSongs } from "../drizzel/query.ts";
 import { GetObjectCommand, HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { pipeline } from "stream/promises";
 import type { Readable } from "node:stream";
@@ -19,7 +19,32 @@ config({path: path.resolve(__dirname, "../.env")});
 const songsRouter = Router();
 const s3 = new S3Client({region: process.env.AWS_REGION as string});
 
-songsRouter.get("/:id", 
+songsRouter.get("/", 
+    async (req: Request, res: Response)=>{
+        try{
+            const _songs : bio[] = await getSongs();
+            
+            if(_songs.length != 0){
+                return res.status(200).send({
+                    error: false,
+                    data: _songs
+                });
+            }else{
+                return res.status(200).send({
+                    error: false,
+                    message: "Empty."
+                });
+            }
+        }catch(e){
+            return res.status(500).send({
+                error: true,
+                message: "Something went wrong"
+            });
+        }
+    }
+);
+
+songsRouter.get("/stream/:id", 
     async (req: Request<songIdParam>, res: Response)=>{
         try{
             const song_id = req.params.id;
