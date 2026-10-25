@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import "dart:math";
 
 class Startpage extends StatefulWidget {
   const new({super.key, required this.duration});
@@ -14,10 +13,13 @@ class _StartpageState extends State<Startpage> with TickerProviderStateMixin{
 
   late AnimationController _controller;
   late AnimationController _controller2;
+  late AnimationController _swipeController;
 
   late Animation<double> _sweepIn;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _textAnimation;
+
+  bool _done = false;
 
   List<Color> primaryColors = <Color>[
     Color(0xff252525),
@@ -39,10 +41,23 @@ class _StartpageState extends State<Startpage> with TickerProviderStateMixin{
       vsync: this
     );
     _controller2 = AnimationController(vsync: this, duration: widget.duration);
+    _swipeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     
     _controller.addListener((){
       if(_controller.isCompleted){
         _controller2.forward();
+      }
+    });
+
+    _controller2.addListener((){
+      if(_controller2.isCompleted){
+        _done = true;
+      }
+    });
+
+    _swipeController.addListener((){
+      if(_swipeController.isCompleted){
+        Navigator.pushNamed(context, '/songs');
       }
     });
 
@@ -64,20 +79,22 @@ class _StartpageState extends State<Startpage> with TickerProviderStateMixin{
     super.dispose();
   }
 
-  void _processGesture(Offset? start, Offset? end){
-    double dx = end!.dx - start!.dx;
-    double dy = end.dy - start.dy;
-    double distance = sqrt(pow(dx, 2) + pow(dy, 2));
-    double angle = (dy == 0 && dx == 0) ? 0 : atan(dy / dx);
-
-    print("Start $start");
-    print("End: $end");
-    print("Distance: $distance");
-    print("Angle: $angle");
+  void _panUpdate(DragUpdateDetails d, double _screenheight){
+    if(!_done) return;
+    final delta = -d.delta.dy / (_screenheight * 0.4); //swipe lenght by 40% of the screen hight so we have how much % is swipped
+    _swipeController.value = (_swipeController.value + delta).clamp(0.0, 1.0); //clappmed so that we dont get error
   }
 
-  Offset? _startPoint;
-  Offset? _endPoint;
+  void _panEnd(DragEndDetails d){
+    if(!_done) return;
+
+    final flingUp = d.velocity.pixelsPerSecond.dy < -800;
+    if(_swipeController.value > 0.5 || flingUp){
+      _swipeController.forward();
+    }else{
+      _swipeController.reverse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,44 +121,59 @@ class _StartpageState extends State<Startpage> with TickerProviderStateMixin{
             ),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onPanStart: (detalis){
-                _startPoint = detalis.globalPosition;
+              onPanUpdate: (details){
+                _panUpdate(details, _screenheight);
               },
-              onPanUpdate: (detalis){
-                _endPoint = detalis.globalPosition;
-              },
-              onPanEnd: (details){
-                if(_startPoint != null && _endPoint != null){
-                  _processGesture(_startPoint, _endPoint);
-                }
-              },
+              onPanEnd: _panEnd,
               child: SizedBox.expand(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SlideTransition(
-                      position: _slideAnimation,
-                      child: FadeTransition(
-                        opacity: _sweepIn,
-                        child: Image.asset(
-                          'assets/placeholder.png',
-                          height: _screenheight * 0.3,
+                child: AnimatedBuilder(
+                  animation: _swipeController,
+                  builder: (context, child){
+                    final e = Curves.easeOut.transform(_swipeController.value);
+                    return Opacity(
+                      opacity: 1 - e,
+                      child: Transform.translate(
+                        offset: Offset(0, -e * _screenheight * 0.25),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SlideTransition(
+                        position: _slideAnimation,
+                        child: FadeTransition(
+                          opacity: _sweepIn,
+                          child: Image.asset(
+                            'assets/placeholder.png',
+                            height: _screenheight * 0.3,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: _screenheight * 0.1,),
-                    FadeTransition(
-                      opacity: _textAnimation,
-                      child: Text(
-                        "Swipe up to start",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20
+                      SizedBox(height: _screenheight * 0.1,),
+                      FadeTransition(
+                        opacity: _textAnimation,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Swipe up to start",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_drop_up_rounded,
+                              color: Colors.white,
+                              size: 40,
+                            )
+                          ],
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               )
             ),
